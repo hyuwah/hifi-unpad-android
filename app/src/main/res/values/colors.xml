@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#DE2418</color>
+    <color name="colorPrimaryDark">#9b1911</color>
+    <color name="colorAccent">#0049BD</color>
+    <color name="blueHifi">#0049BD</color>
+    <color name="redHifi">#DE2418</color>
+</resources>
