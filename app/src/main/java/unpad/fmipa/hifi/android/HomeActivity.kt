@@ -15,9 +15,13 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.CalendarMonth
 import com.kizitonwose.calendarview.model.DayOwner
@@ -41,6 +45,7 @@ import java.util.*
 class HomeActivity : AppCompatActivity() {
 
     var state : Bundle? = null
+    private lateinit var viewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,11 +87,29 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.fl_main_hifi_profile, HimpunanMainMenuFragment())
             .commit()
 
+        viewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        viewModel.getArticleList().observe(this, Observer { articles ->
+
+            if (articles != null) {
+               println(articles.toString())
+            }
+
+        })
+
+        viewModel.snackbar.observe(this, Observer { value ->
+            value?.let {
+                Snackbar.make(rootView, value, Snackbar.LENGTH_LONG).show()
+                viewModel.onSnackbarShowed ()
+            }
+
+        })
+
     }
 
     override fun onResume() {
         super.onResume()
         setupCalendar(state)
+        viewModel.fetchFeed()
     }
 
     private fun selectDate(date: LocalDate) {
