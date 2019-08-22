@@ -3,7 +3,6 @@ package unpad.fmipa.hifi.android
 import android.content.Context
 import android.graphics.Color
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +11,13 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -87,11 +87,18 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.fl_main_hifi_profile, HimpunanMainMenuFragment())
             .commit()
 
+        var adapter : RssAdapter
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.itemAnimator = DefaultItemAnimator()
         viewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
         viewModel.getArticleList().observe(this, Observer { articles ->
 
             if (articles != null) {
+                // set adapter
                println(articles.toString())
+                adapter = RssAdapter(articles)
+                recycler_view.adapter = adapter
+                adapter.notifyDataSetChanged()
             }
 
         })
