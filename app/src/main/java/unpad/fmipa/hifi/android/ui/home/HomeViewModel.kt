@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android
+package unpad.fmipa.hifi.android.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

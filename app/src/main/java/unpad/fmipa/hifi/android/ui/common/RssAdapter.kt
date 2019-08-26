@@ -1,22 +1,23 @@
-package unpad.fmipa.hifi.android
+package unpad.fmipa.hifi.android.ui.common
 
-import android.text.method.LinkMovementMethod
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.prof.rssparser.Article
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_news_rss_main.view.*
+import unpad.fmipa.hifi.android.R
+import unpad.fmipa.hifi.android.ui.common.NewsDetailActivity.Companion.CONTENT_KEY
+import unpad.fmipa.hifi.android.ui.common.NewsDetailActivity.Companion.TITLE_KEY
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class RssAdapter(val articles: MutableList<Article>) : RecyclerView.Adapter<RssAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_news_rss_main, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(LayoutInflater.from(parent.context).inflate(
+        R.layout.item_news_rss_main, parent, false))
 
     override fun getItemCount() = articles.size
 
@@ -61,26 +62,11 @@ class RssAdapter(val articles: MutableList<Article>) : RecyclerView.Adapter<RssA
             itemView.categories.text = categories
 
             itemView.setOnClickListener {
-                //show article content inside a dialog
-                val articleView = WebView(itemView.context)
-
-                articleView.settings.loadWithOverviewMode = true
-
-                articleView.settings.javaScriptEnabled = true
-                articleView.isHorizontalScrollBarEnabled = false
-                articleView.webChromeClient = WebChromeClient()
-                articleView.loadDataWithBaseURL(null, "<style>img{display: inline; height: auto; max-width: 100%;} " +
-
-                        "</style>\n" + "<style>iframe{ height: auto; width: auto;}" + "</style>\n" + article.content, null, "utf-8", null)
-
-                val alertDialog = androidx.appcompat.app.AlertDialog.Builder(itemView.context).create()
-                alertDialog.setTitle(article.title)
-                alertDialog.setView(articleView)
-                alertDialog.setButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE, "OK"
-                ) { dialog, _ -> dialog.dismiss() }
-                alertDialog.show()
-
-                (alertDialog.findViewById<View>(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
+                var intent = Intent(it.context,NewsDetailActivity::class.java).apply {
+                    putExtra(TITLE_KEY,article.title)
+                    putExtra(CONTENT_KEY,article.content)
+                }
+                it.context.startActivity(intent)
             }
         }
     }
