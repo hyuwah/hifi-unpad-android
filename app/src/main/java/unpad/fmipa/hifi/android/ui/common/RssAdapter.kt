@@ -15,7 +15,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class RssAdapter(val articles: MutableList<Article>) : RecyclerView.Adapter<RssAdapter.ViewHolder>() {
+class RssAdapter(private val articles: MutableList<Article>) : RecyclerView.Adapter<RssAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(LayoutInflater.from(parent.context).inflate(
         R.layout.item_news_rss_main, parent, false))
 

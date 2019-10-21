@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,13 +36,15 @@ class EventCalendarFragment : Fragment() {
 
     private var state: Bundle? = null
 
+    private lateinit var viewModel : EventCalendarViewModel
+
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
 
     private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
     private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
     private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
-    private val events = mutableMapOf<LocalDate, List<CalendarEvent>>()
+    private var events = mutableMapOf<LocalDate, List<CalendarEvent>>()
 
     private val eventsAdapter = CalendarEventsAdapter {
         Toast.makeText(requireContext(), "Click ${it.date}", Toast.LENGTH_SHORT).show()
@@ -56,7 +59,14 @@ class EventCalendarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         state = savedInstanceState
+        viewModel = ViewModelProvider(this).get(EventCalendarViewModel::class.java)
         setupCalendar(savedInstanceState)
+
+        viewModel.events.observe(this, androidx.lifecycle.Observer {
+            events = it
+        })
+
+        viewModel.fetch()
     }
 
     private fun selectDate(date: LocalDate) {
@@ -127,7 +137,7 @@ class EventCalendarFragment : Fragment() {
                             if(day.date == today) container.todayBg.visibility = View.VISIBLE
                             textView.setTypeface(textView.typeface, Typeface.BOLD)
                             textView.setBackgroundResource(R.drawable.bg_calendar_day_selected)
-                            dotView.visibility = View.INVISIBLE
+                            dotView.isVisible = events[day.date].orEmpty().isNotEmpty()
                         }
                         today -> {
                             container.todayBg.visibility = View.VISIBLE
@@ -173,7 +183,7 @@ class EventCalendarFragment : Fragment() {
             }
         }
 
-        setupEvent(currentMonth)
+//        setupEvent(currentMonth)
 
     }
 

@@ -29,6 +29,7 @@ class NewsDetailActivity : AppCompatActivity() {
             settings.loadWithOverviewMode = true
             settings.javaScriptEnabled = true
             isHorizontalScrollBarEnabled = false
+            isVerticalScrollBarEnabled = false
             webChromeClient = WebChromeClient()
             loadDataWithBaseURL(
                 null,
