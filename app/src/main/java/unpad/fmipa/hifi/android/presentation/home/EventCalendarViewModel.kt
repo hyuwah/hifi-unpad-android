@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.home
+package unpad.fmipa.hifi.android.presentation.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,14 +7,11 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.threeten.bp.LocalDate
-import unpad.fmipa.hifi.android.data.remote.CalendarEventApi
-import unpad.fmipa.hifi.android.data.remote.RemoteSource
-import unpad.fmipa.hifi.android.data.remote.Repository
-import unpad.fmipa.hifi.android.ui.model.CalendarEvent
+import unpad.fmipa.hifi.android.domain.Repository
+import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
 import java.util.*
 
-class EventCalendarViewModel : ViewModel() {
-    private val repository = Repository(RemoteSource(CalendarEventApi.create()))
+class EventCalendarViewModel(private val repository: Repository) : ViewModel() {
 
     private val _events = MutableLiveData<MutableMap<LocalDate, List<CalendarEvent>>>()
     val events = _events as LiveData<MutableMap<LocalDate, List<CalendarEvent>>>

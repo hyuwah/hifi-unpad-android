@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.common
+package unpad.fmipa.hifi.android.presentation.common
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import com.prof.rssparser.Article
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_news_rss_main.view.*
 import unpad.fmipa.hifi.android.R
-import unpad.fmipa.hifi.android.ui.common.NewsDetailActivity.Companion.CONTENT_KEY
-import unpad.fmipa.hifi.android.ui.common.NewsDetailActivity.Companion.TITLE_KEY
+import unpad.fmipa.hifi.android.presentation.common.NewsDetailActivity.Companion.CONTENT_KEY
+import unpad.fmipa.hifi.android.presentation.common.NewsDetailActivity.Companion.TITLE_KEY
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*

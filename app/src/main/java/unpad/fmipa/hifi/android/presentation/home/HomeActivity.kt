@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.home
+package unpad.fmipa.hifi.android.presentation.home
 
 import android.graphics.Color
 import android.net.Uri

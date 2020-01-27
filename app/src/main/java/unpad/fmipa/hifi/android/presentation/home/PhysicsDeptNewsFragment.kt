@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.home
+package unpad.fmipa.hifi.android.presentation.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_main_physics_dept_news.*
 import unpad.fmipa.hifi.android.R
-import unpad.fmipa.hifi.android.ui.common.RssAdapter
+import unpad.fmipa.hifi.android.presentation.common.RssAdapter
 
 
 

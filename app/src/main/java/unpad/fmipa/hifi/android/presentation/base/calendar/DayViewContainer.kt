@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.base.calendar
+package unpad.fmipa.hifi.android.presentation.base.calendar
 
 import android.view.View
 import com.kizitonwose.calendarview.model.CalendarDay

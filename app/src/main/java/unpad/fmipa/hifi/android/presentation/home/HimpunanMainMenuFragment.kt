@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.home
+package unpad.fmipa.hifi.android.presentation.home
 
 
 import android.os.Bundle
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_hifi_main_menu.*
 import unpad.fmipa.hifi.android.R
-import unpad.fmipa.hifi.android.ui.model.HimpunanMainMenu
+import unpad.fmipa.hifi.android.presentation.model.HimpunanMainMenu
 
 /**
  * A simple [Fragment] subclass.

@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.common
+package unpad.fmipa.hifi.android.presentation.common
 
 import android.os.Bundle
 import android.view.MenuItem

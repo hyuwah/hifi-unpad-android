@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.home
+package unpad.fmipa.hifi.android.presentation.home
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.calendar_event_item_view.view.*
 import unpad.fmipa.hifi.android.R
-import unpad.fmipa.hifi.android.ui.model.CalendarEvent
+import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
 
 class CalendarEventsAdapter(val onClick: (CalendarEvent) -> Unit) :
     RecyclerView.Adapter<CalendarEventsAdapter.ViewHolder>() {

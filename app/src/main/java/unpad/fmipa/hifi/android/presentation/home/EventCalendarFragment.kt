@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.home
+package unpad.fmipa.hifi.android.presentation.home
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +18,7 @@ import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import kotlinx.android.synthetic.main.fragment_calendar_event.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.MonthDay
@@ -27,16 +27,16 @@ import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.WeekFields
 import unpad.fmipa.hifi.android.R
 import unpad.fmipa.hifi.android.helpers.getColorCompat
-import unpad.fmipa.hifi.android.ui.base.calendar.DayViewContainer
-import unpad.fmipa.hifi.android.ui.base.calendar.MonthViewContainer
-import unpad.fmipa.hifi.android.ui.model.CalendarEvent
+import unpad.fmipa.hifi.android.presentation.base.calendar.DayViewContainer
+import unpad.fmipa.hifi.android.presentation.base.calendar.MonthViewContainer
+import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
 import java.util.*
 
 class EventCalendarFragment : Fragment() {
 
     private var state: Bundle? = null
 
-    private lateinit var viewModel : EventCalendarViewModel
+    private val viewModel: EventCalendarViewModel by viewModel()
 
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
@@ -59,7 +59,6 @@ class EventCalendarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         state = savedInstanceState
-        viewModel = ViewModelProvider(this).get(EventCalendarViewModel::class.java)
         setupCalendar(savedInstanceState)
 
         viewModel.events.observe(this, androidx.lifecycle.Observer {

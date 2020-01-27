@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.ui.model
+package unpad.fmipa.hifi.android.presentation.model
 
 import org.threeten.bp.LocalDate
 

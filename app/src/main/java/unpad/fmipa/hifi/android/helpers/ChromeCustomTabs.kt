@@ -8,9 +8,9 @@ import unpad.fmipa.hifi.android.R
 
 object ChromeCustomTabs {
 
-    const val PAUS_URL = "http://paus.unpad.ac.id/"
+    const val PAUS_URL = "https://paus.unpad.ac.id/"
     const val ANGKUTAN_URL = "https://siat.unpad.ac.id/sarpras/angkutankampus/"
-    const val PINTAS_URL = "http://pintas.unpad.ac.id"
+    const val PINTAS_URL = "https://pintas.unpad.ac.id"
 
     fun create(ctx: Context): CustomTabsIntent.Builder {
         return CustomTabsIntent.Builder().apply {
