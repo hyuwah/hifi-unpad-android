@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.prof.rssparser.Article
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_news_rss_main.view.*
 import unpad.fmipa.hifi.android.R
 import unpad.fmipa.hifi.android.presentation.common.NewsDetailActivity.Companion.CONTENT_KEY
@@ -43,10 +43,9 @@ class RssAdapter(private val articles: MutableList<Article>) : RecyclerView.Adap
 
             itemView.title.text = article.title
 
-            Picasso.get()
-                .load(article.image)
-                .placeholder(R.drawable.ic_launcher_background)
-                .into(itemView.image)
+            itemView.image.load(article.image) {
+                placeholder(R.drawable.ic_launcher_background)
+            }
 
             itemView.pubDate.text = pubDateString
 
