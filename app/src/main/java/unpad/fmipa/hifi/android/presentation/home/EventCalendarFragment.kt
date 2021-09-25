@@ -61,9 +61,7 @@ class EventCalendarFragment : Fragment() {
         state = savedInstanceState
         setupCalendar(savedInstanceState)
 
-        viewModel.events.observe(this, androidx.lifecycle.Observer {
-            events = it
-        })
+        viewModel.events.observe(viewLifecycleOwner) { events = it }
 
         viewModel.fetch()
     }
@@ -155,7 +153,7 @@ class EventCalendarFragment : Fragment() {
         }
 
         calendar_view.monthScrollListener = {
-            tv_calendar_month.text =
+            tv_calendar_month?.text =
                     titleFormatter.format(it.yearMonth)
 //                (if (it.year == today.year) titleSameYearFormatter.format(it.yearMonth) else titleFormatter.format(
 //                    it.yearMonth

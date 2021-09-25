@@ -7,7 +7,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.view_main_toolbar.*
@@ -57,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
                 .launchUrl(this, Uri.parse(ChromeCustomTabs.PINTAS_URL))
         }
 
-        viewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         supportFragmentManager.beginTransaction()
             .replace(
@@ -72,12 +72,12 @@ class HomeActivity : AppCompatActivity() {
             )
             .commit()
 
-        viewModel.snackbar.observe(this, Observer { value ->
+        viewModel.snackbar.observe(this) { value ->
             value?.let {
                 Snackbar.make(rootView, value, Snackbar.LENGTH_LONG).show()
                 viewModel.onSnackbarShowed()
             }
-        })
+        }
     }
 
 }
