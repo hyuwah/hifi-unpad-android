@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.threeten.bp.LocalDate
 import unpad.fmipa.hifi.android.domain.Repository
 import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
+import java.time.LocalDate
 import java.util.*
 
 class EventCalendarViewModel(private val repository: Repository) : ViewModel() {

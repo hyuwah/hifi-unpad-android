@@ -19,17 +19,17 @@ import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import kotlinx.android.synthetic.main.fragment_calendar_event.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.threeten.bp.DayOfWeek
-import org.threeten.bp.LocalDate
-import org.threeten.bp.MonthDay
-import org.threeten.bp.YearMonth
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.temporal.WeekFields
 import unpad.fmipa.hifi.android.R
 import unpad.fmipa.hifi.android.helpers.getColorCompat
 import unpad.fmipa.hifi.android.presentation.base.calendar.DayViewContainer
 import unpad.fmipa.hifi.android.presentation.base.calendar.MonthViewContainer
 import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.MonthDay
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
 import java.util.*
 
 class EventCalendarFragment : Fragment() {

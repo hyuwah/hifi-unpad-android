@@ -59,7 +59,7 @@ dependencies {
     implementation "io.insert-koin:koin-android:3.1.2"
 
     // ELSE
-    implementation 'com.github.kizitonwose:CalendarView:0.2.5'
+    implementation 'com.github.kizitonwose:CalendarView:1.0.4'
     implementation 'com.prof.rssparser:rssparser:2.0.4'
     implementation 'io.coil-kt:coil:1.3.2'
 
