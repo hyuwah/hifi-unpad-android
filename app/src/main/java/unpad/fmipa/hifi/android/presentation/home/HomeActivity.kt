@@ -4,57 +4,59 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
+import android.viewbinding.library.activity.viewBinding
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.view_main_toolbar.*
 import unpad.fmipa.hifi.android.R
+import unpad.fmipa.hifi.android.databinding.ActivityMainBinding
 import unpad.fmipa.hifi.android.helpers.ChromeCustomTabs
 
 class HomeActivity : AppCompatActivity() {
 
+    private val binding: ActivityMainBinding by viewBinding()
     internal lateinit var viewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
 
-        scrollContent.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, _: Int ->
-            val colorBackground = if (scrollY < 255) {
-                Color.argb(scrollY, 222, 36, 24)
-            } else {
-                Color.argb(255, 222, 36, 24)
+        with(binding) {
+
+            scrollContent.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, _: Int ->
+                val colorBackground = if (scrollY < 255) {
+                    Color.argb(scrollY, 222, 36, 24)
+                } else {
+                    Color.argb(255, 222, 36, 24)
+                }
+                val colorText = if (scrollY < 255) {
+                    Color.argb(scrollY, 255, 255, 255)
+                } else {
+                    Color.argb(255, 255, 255, 255)
+                }
+                toolbar.mainToolbar.setBackgroundColor(colorBackground)
+                toolbar.tvTopbarTitle.setTextColor(colorText)
             }
-            val colorText = if (scrollY < 255) {
-                Color.argb(scrollY, 255, 255, 255)
-            } else {
-                Color.argb(255, 255, 255, 255)
+
+            btnMainPaus.setOnClickListener {
+                ChromeCustomTabs.create(this@HomeActivity).build()
+                    .launchUrl(this@HomeActivity, Uri.parse(ChromeCustomTabs.PAUS_URL))
             }
-            main_toolbar.setBackgroundColor(colorBackground)
-            tv_topbar_title.setTextColor(colorText)
-        }
 
-        btn_main_paus.setOnClickListener {
-            ChromeCustomTabs.create(this).build()
-                .launchUrl(this, Uri.parse(ChromeCustomTabs.PAUS_URL))
-        }
+            btnMainAngkutan.setOnClickListener {
+                ChromeCustomTabs.create(this@HomeActivity).build()
+                    .launchUrl(this@HomeActivity, Uri.parse(ChromeCustomTabs.ANGKUTAN_URL))
+            }
 
-        btn_main_angkutan.setOnClickListener {
-            ChromeCustomTabs.create(this).build()
-                .launchUrl(this, Uri.parse(ChromeCustomTabs.ANGKUTAN_URL))
-        }
-
-        btn_main_pintas.setOnClickListener {
-            ChromeCustomTabs.create(this).build()
-                .launchUrl(this, Uri.parse(ChromeCustomTabs.PINTAS_URL))
+            btnMainPintas.setOnClickListener {
+                ChromeCustomTabs.create(this@HomeActivity).build()
+                    .launchUrl(this@HomeActivity, Uri.parse(ChromeCustomTabs.PINTAS_URL))
+            }
         }
 
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -74,7 +76,7 @@ class HomeActivity : AppCompatActivity() {
 
         viewModel.snackbar.observe(this) { value ->
             value?.let {
-                Snackbar.make(rootView, value, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.rootView, value, Snackbar.LENGTH_LONG).show()
                 viewModel.onSnackbarShowed()
             }
         }

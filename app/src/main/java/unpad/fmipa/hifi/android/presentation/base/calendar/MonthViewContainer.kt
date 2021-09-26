@@ -1,9 +1,10 @@
 package unpad.fmipa.hifi.android.presentation.base.calendar
 
 import android.view.View
+import android.widget.LinearLayout
 import com.kizitonwose.calendarview.ui.ViewContainer
-import kotlinx.android.synthetic.main.calendar_day_legend.view.*
+import unpad.fmipa.hifi.android.R
 
 class MonthViewContainer(view: View) : ViewContainer(view) {
-    val legendLayout = view.legendLayout
+    val legendLayout = view.findViewById<LinearLayout>(R.id.legendLayout)
 }

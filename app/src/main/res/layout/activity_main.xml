@@ -154,7 +154,7 @@
                     android:id="@+id/fl_main_hifi_menu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:layout="@layout/fragment_hifi_main_menu"/>
+                    tools:layout="@layout/fragment_hifi_main_menu" />
 
             <!--            Event Calendar-->
             <FrameLayout
@@ -169,12 +169,14 @@
                     android:id="@+id/fl_physics_dept_news"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:layout="@layout/fragment_main_physics_dept_news"/>
+                    tools:layout="@layout/fragment_main_physics_dept_news" />
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <include layout="@layout/view_main_toolbar" />
+    <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_main_toolbar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

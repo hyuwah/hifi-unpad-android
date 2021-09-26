@@ -1,39 +1,38 @@
 package unpad.fmipa.hifi.android.presentation.home
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.calendar_event_item_view.view.*
-import unpad.fmipa.hifi.android.R
+import unpad.fmipa.hifi.android.databinding.CalendarEventItemViewBinding
 import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
 
-class CalendarEventsAdapter(val onClick: (CalendarEvent) -> Unit) :
+class CalendarEventsAdapter(private val onClick: (CalendarEvent) -> Unit) :
     RecyclerView.Adapter<CalendarEventsAdapter.ViewHolder>() {
 
     val events = mutableListOf<CalendarEvent>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.calendar_event_item_view,parent,false))
+        ViewHolder(
+            CalendarEventItemViewBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
 
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.bind(events[position])
+        viewHolder.bind(events[position], onClick)
     }
 
     override fun getItemCount(): Int = events.size
 
-    inner class ViewHolder(override val containerView: View) :
-        RecyclerView.ViewHolder(containerView), LayoutContainer {
+    inner class ViewHolder(
+        private val binding: CalendarEventItemViewBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            itemView.setOnClickListener {
-                onClick(events[adapterPosition])
+        fun bind(event: CalendarEvent, onClick: (CalendarEvent) -> Unit) = with(binding) {
+            root.setOnClickListener {
+                onClick(event)
             }
-        }
-
-        fun bind(event: CalendarEvent) = with(itemView) {
             itemEventText.text = event.text
         }
     }

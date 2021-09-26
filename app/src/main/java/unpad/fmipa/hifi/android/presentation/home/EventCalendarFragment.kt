@@ -3,9 +3,8 @@ package unpad.fmipa.hifi.android.presentation.home
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.viewbinding.library.fragment.viewBinding
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.children
@@ -17,9 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
-import kotlinx.android.synthetic.main.fragment_calendar_event.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import unpad.fmipa.hifi.android.R
+import unpad.fmipa.hifi.android.databinding.FragmentCalendarEventBinding
 import unpad.fmipa.hifi.android.helpers.getColorCompat
 import unpad.fmipa.hifi.android.presentation.base.calendar.DayViewContainer
 import unpad.fmipa.hifi.android.presentation.base.calendar.MonthViewContainer
@@ -32,7 +31,9 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
 
-class EventCalendarFragment : Fragment() {
+class EventCalendarFragment : Fragment(R.layout.fragment_calendar_event) {
+
+    private val binding: FragmentCalendarEventBinding by viewBinding()
 
     private var state: Bundle? = null
 
@@ -50,12 +51,6 @@ class EventCalendarFragment : Fragment() {
         Toast.makeText(requireContext(), "Click ${it.date}", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_calendar_event, container, false)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         state = savedInstanceState
@@ -70,17 +65,17 @@ class EventCalendarFragment : Fragment() {
         if (selectedDate != date) {
             val oldDate = selectedDate
             selectedDate = date
-            oldDate?.let { calendar_view.notifyDateChanged(it) }
-            calendar_view.notifyDateChanged(date)
+            oldDate?.let { binding.calendarView.notifyDateChanged(it) }
+            binding.calendarView.notifyDateChanged(date)
             updateAdapterForDate(date)
         }
     }
 
-    private fun setupCalendar(savedInstanceState: Bundle?) {
-        rv_calendar_event.layoutManager =
+    private fun setupCalendar(savedInstanceState: Bundle?) = with(binding) {
+        rvCalendarEvent.layoutManager =
             LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-        rv_calendar_event.adapter = eventsAdapter
-        rv_calendar_event.addItemDecoration(
+        rvCalendarEvent.adapter = eventsAdapter
+        rvCalendarEvent.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
                 RecyclerView.VERTICAL
@@ -90,27 +85,27 @@ class EventCalendarFragment : Fragment() {
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
 
-        calendar_view.setup(
+        calendarView.setup(
             currentMonth.minusMonths(10),
             currentMonth.plusMonths(10),
             daysOfWeek.first()
         )
-        calendar_view.inDateStyle = InDateStyle.ALL_MONTHS
-        calendar_view.outDateStyle = OutDateStyle.END_OF_ROW
-        calendar_view.maxRowCount = 6
-        calendar_view.hasBoundaries=true
+        calendarView.inDateStyle = InDateStyle.ALL_MONTHS
+        calendarView.outDateStyle = OutDateStyle.END_OF_ROW
+        calendarView.maxRowCount = 6
+        calendarView.hasBoundaries=true
 
-        calendar_view.scrollToMonth(currentMonth)
+        calendarView.scrollToMonth(currentMonth)
 
         if (savedInstanceState == null) {
-            calendar_view.post {
+            calendarView.post {
                 // Show today's events initially.
                 selectDate(today)
             }
         }
 
 
-        calendar_view.dayBinder = object : DayBinder<DayViewContainer> {
+        calendarView.dayBinder = object : DayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view) {
                 selectDate(it)
             }
@@ -152,8 +147,8 @@ class EventCalendarFragment : Fragment() {
             }
         }
 
-        calendar_view.monthScrollListener = {
-            tv_calendar_month?.text =
+        calendarView.monthScrollListener = {
+            tvCalendarMonth.text =
                     titleFormatter.format(it.yearMonth)
 //                (if (it.year == today.year) titleSameYearFormatter.format(it.yearMonth) else titleFormatter.format(
 //                    it.yearMonth
@@ -165,7 +160,7 @@ class EventCalendarFragment : Fragment() {
         }
 
 
-        calendar_view.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
+        calendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
             override fun create(view: View) = MonthViewContainer(view)
             override fun bind(container: MonthViewContainer, month: CalendarMonth) {
                 // Setup each header day text if we have not done that already.
@@ -212,7 +207,7 @@ class EventCalendarFragment : Fragment() {
         eventsAdapter.events.clear()
         eventsAdapter.events.addAll(events[date].orEmpty())
         eventsAdapter.notifyDataSetChanged()
-        tv_calendar_selected_date.text = selectionFormatter.format(date)
+        binding.tvCalendarSelectedDate.text = selectionFormatter.format(date)
     }
 }
 

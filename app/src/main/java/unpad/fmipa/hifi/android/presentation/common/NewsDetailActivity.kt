@@ -2,10 +2,10 @@ package unpad.fmipa.hifi.android.presentation.common
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.viewbinding.library.activity.viewBinding
 import android.webkit.WebChromeClient
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_news_detail.*
-import unpad.fmipa.hifi.android.R
+import unpad.fmipa.hifi.android.databinding.ActivityNewsDetailBinding
 
 
 class NewsDetailActivity : AppCompatActivity() {
@@ -15,28 +15,31 @@ class NewsDetailActivity : AppCompatActivity() {
         const val CONTENT_KEY = "news_content"
     }
 
+    private val binding: ActivityNewsDetailBinding by viewBinding()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_news_detail)
 
-        setSupportActionBar(my_toolbar)
-        my_toolbar_title.text = "News:" + " ${intent.getStringExtra(TITLE_KEY)}"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        with(binding) {
+            setSupportActionBar(myToolbar)
+            myToolbarTitle.text = "News:" + " ${intent.getStringExtra(TITLE_KEY)}"
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        var content = intent.getStringExtra(CONTENT_KEY)
+            val content = intent.getStringExtra(CONTENT_KEY)
 
-        wv_news_detail.apply {
-            settings.loadWithOverviewMode = true
-            settings.javaScriptEnabled = true
-            isHorizontalScrollBarEnabled = false
-            isVerticalScrollBarEnabled = false
-            webChromeClient = WebChromeClient()
-            loadDataWithBaseURL(
-                null,
-                "<style>img{display: inline; height: auto; max-width: 100%;} " +
-                        "</style>\n" + "<style>iframe{ height: auto; width: auto;}" + "</style>\n" +
-                        content, null, "utf-8", null
-            )
+            wvNewsDetail.apply {
+                settings.loadWithOverviewMode = true
+                settings.javaScriptEnabled = true
+                isHorizontalScrollBarEnabled = false
+                isVerticalScrollBarEnabled = false
+                webChromeClient = WebChromeClient()
+                loadDataWithBaseURL(
+                    null,
+                    "<style>img{display: inline; height: auto; max-width: 100%;} " +
+                            "</style>\n" + "<style>iframe{ height: auto; width: auto;}" + "</style>\n" +
+                            content, null, "utf-8", null
+                )
+            }
         }
 
     }

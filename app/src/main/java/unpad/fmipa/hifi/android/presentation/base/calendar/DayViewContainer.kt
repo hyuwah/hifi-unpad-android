@@ -1,17 +1,19 @@
 package unpad.fmipa.hifi.android.presentation.base.calendar
 
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.ViewContainer
-import kotlinx.android.synthetic.main.calendar_day.view.*
+import unpad.fmipa.hifi.android.R
 import java.time.LocalDate
 
 class DayViewContainer(view: View, onSelectDate: (date: LocalDate) -> Unit) : ViewContainer(view) {
     lateinit var day: CalendarDay // Will be set when this container is bound.
-    val textView = view.exThreeDayText
-    val dotView = view.exThreeDotView
-    val todayBg = view.iv_today_bg
+    val textView = view.findViewById<TextView>(R.id.exThreeDayText)
+    val dotView = view.findViewById<View>(R.id.exThreeDotView)
+    val todayBg = view.findViewById<ImageView>(R.id.iv_today_bg)
 
     init {
         view.setOnClickListener {

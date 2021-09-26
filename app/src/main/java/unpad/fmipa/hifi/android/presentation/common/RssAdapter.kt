@@ -2,13 +2,12 @@ package unpad.fmipa.hifi.android.presentation.common
 
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.prof.rssparser.Article
-import kotlinx.android.synthetic.main.item_news_rss_main.view.*
 import unpad.fmipa.hifi.android.R
+import unpad.fmipa.hifi.android.databinding.ItemNewsRssMainBinding
 import unpad.fmipa.hifi.android.presentation.common.NewsDetailActivity.Companion.CONTENT_KEY
 import unpad.fmipa.hifi.android.presentation.common.NewsDetailActivity.Companion.TITLE_KEY
 import java.text.ParseException
@@ -16,17 +15,18 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class RssAdapter(private val articles: MutableList<Article>) : RecyclerView.Adapter<RssAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(LayoutInflater.from(parent.context).inflate(
-        R.layout.item_news_rss_main, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
+        ItemNewsRssMainBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+    )
 
     override fun getItemCount() = articles.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(articles[position])
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(article: Article) {
-
-
+    inner class ViewHolder(private val binding: ItemNewsRssMainBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(article: Article) = with(binding) {
             val pubDateString = try {
                 val sourceDateString = article.pubDate
 
@@ -41,13 +41,13 @@ class RssAdapter(private val articles: MutableList<Article>) : RecyclerView.Adap
                 article.pubDate
             }
 
-            itemView.title.text = article.title
+            title.text = article.title
 
-            itemView.image.load(article.image) {
+            image.load(article.image) {
                 placeholder(R.drawable.ic_launcher_background)
             }
 
-            itemView.pubDate.text = pubDateString
+            pubDate.text = pubDateString
 
             var categories = ""
             for (i in 0 until article.categories.size) {
@@ -58,9 +58,9 @@ class RssAdapter(private val articles: MutableList<Article>) : RecyclerView.Adap
                 }
             }
 
-            itemView.categories.text = categories
+            tvCategories.text = categories
 
-            itemView.setOnClickListener {
+            root.setOnClickListener {
                 var intent = Intent(it.context,NewsDetailActivity::class.java).apply {
                     putExtra(TITLE_KEY,article.title)
                     putExtra(CONTENT_KEY,article.content)
