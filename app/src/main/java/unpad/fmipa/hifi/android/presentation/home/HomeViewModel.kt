@@ -19,9 +19,9 @@ class HomeViewModel : ViewModel() {
 
         private lateinit var articleListLive: MutableLiveData<MutableList<Article>>
 
-        private val _snackbar = MutableLiveData<String>()
+        private val _snackbar = MutableLiveData<String?>()
 
-        val snackbar: LiveData<String>
+        val snackbar: LiveData<String?>
             get() = _snackbar
 
         fun onSnackbarShowed() {
@@ -47,8 +47,9 @@ class HomeViewModel : ViewModel() {
         fun fetchFeed() {
             coroutineScope.launch(Dispatchers.Main) {
                 try {
-                    val parser = Parser()
-                    val articleList = parser.getArticles(url)
+                    val parser = Parser.Builder()
+                        .build()
+                    val articleList = parser.getChannel(url).articles
                     setArticleList(articleList)
                 } catch (e: Exception) {
                     e.printStackTrace()
