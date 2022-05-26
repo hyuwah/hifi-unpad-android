@@ -1,5 +1,6 @@
 package unpad.fmipa.hifi.android.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,22 +20,25 @@ class EventCalendarViewModel(private val repository: Repository) : ViewModel() {
     fun fetch() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val result = repository.getCalendarEvents()
+                val airtableResult = repository.getCalendarEventsAirtable()
+                //val result = repository.getCalendarEvents()
                 val holder = mutableMapOf<LocalDate, List<CalendarEvent>>()
-                result.forEach {
-                    val localDate = LocalDate.of(it.year, it.month, it.date)
-                    val calendarEvent = CalendarEvent(
-                        UUID.randomUUID().toString(),
-                        it.event,
-                        localDate
-                    )
-                    val temp = holder[localDate] as MutableList? ?: mutableListOf()
-                    temp.add(calendarEvent)
-                    holder[localDate] = temp
+                airtableResult.forEach { event ->
+                    val localDate = event.fields.localDateTime?.toLocalDate()
+                    localDate?.let {
+                        val calendarEvent = CalendarEvent(
+                            UUID.randomUUID().toString(),
+                            event.fields.name,
+                            localDate
+                        )
+                        val temp = holder[localDate] as MutableList? ?: mutableListOf()
+                        temp.add(calendarEvent)
+                        holder[localDate] = temp
+                    }
                 }
                 _events.postValue(holder)
             } catch (e: Throwable) {
-
+                Log.e("Airtable", e.message.orEmpty())
             }
         }
     }

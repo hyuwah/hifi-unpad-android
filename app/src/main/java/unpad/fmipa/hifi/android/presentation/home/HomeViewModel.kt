@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
 
-        private val url = "http://phys.unpad.ac.id/category/berita/feed"
+        //private val url = "https://news.mit.edu/rss/topic/physics"
+        private val url = "https://www.unpad.ac.id/pengumuman/feed/"
 
         private val viewModelJob = Job()
         private val coroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
