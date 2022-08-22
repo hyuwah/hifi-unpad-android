@@ -1,83 +1,72 @@
-package unpad.fmipa.hifi.android.presentation.home
+package unpad.fmipa.hifi.android.presentation.home.events
 
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.Bundle
 import android.view.View
-import android.viewbinding.library.fragment.viewBinding
+import android.view.ViewParent
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.view.children
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.epoxy.EpoxyAttribute
+import com.airbnb.epoxy.EpoxyHolder
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import unpad.fmipa.hifi.android.R
 import unpad.fmipa.hifi.android.databinding.FragmentCalendarEventBinding
+import unpad.fmipa.hifi.android.domain.model.CalendarEvent
+import unpad.fmipa.hifi.android.helpers.TimeHelper
+import unpad.fmipa.hifi.android.helpers.TimeHelper.daysOfWeekFromLocale
 import unpad.fmipa.hifi.android.helpers.getColorCompat
 import unpad.fmipa.hifi.android.presentation.base.calendar.DayViewContainer
 import unpad.fmipa.hifi.android.presentation.base.calendar.MonthViewContainer
-import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.MonthDay
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
-import java.time.temporal.WeekFields
-import java.util.*
 
-class EventCalendarFragment : Fragment(R.layout.fragment_calendar_event) {
+@EpoxyModelClass(layout = R.layout.fragment_calendar_event)
+abstract class EventCalendarModel: EpoxyModelWithHolder<EventCalendarModel.Holder>() {
 
-    private val binding: FragmentCalendarEventBinding by viewBinding()
-
-    private var state: Bundle? = null
-
-    private val viewModel: EventCalendarViewModel by viewModel()
+    companion object {
+        const val ID = "EventCalendarModel"
+    }
 
     private var selectedDate: LocalDate? = null
     private val today = LocalDate.now()
 
-    private val titleSameYearFormatter = DateTimeFormatter.ofPattern("MMMM")
-    private val titleFormatter = DateTimeFormatter.ofPattern("MMM yyyy")
-    private val selectionFormatter = DateTimeFormatter.ofPattern("d MMM yyyy")
-    private var events = mutableMapOf<LocalDate, List<CalendarEvent>>()
+    @EpoxyAttribute
+    open var events = mutableMapOf<LocalDate, List<CalendarEvent>>()
 
     private val eventsAdapter = CalendarEventsAdapter {
-        Toast.makeText(requireContext(), "Click ${it.date}", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(), "Click ${it.date}", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        state = savedInstanceState
-        setupCalendar(savedInstanceState)
+    override fun getDefaultLayout() = R.layout.fragment_calendar_event
 
-        viewModel.events.observe(viewLifecycleOwner) { events = it }
+    override fun createNewHolder(parent: ViewParent) = Holder()
 
-        viewModel.fetch()
-    }
-
-    private fun selectDate(date: LocalDate) {
-        if (selectedDate != date) {
-            val oldDate = selectedDate
-            selectedDate = date
-            oldDate?.let { binding.calendarView.notifyDateChanged(it) }
-            binding.calendarView.notifyDateChanged(date)
-            updateAdapterForDate(date)
+    override fun bind(holder: Holder) {
+        super.bind(holder)
+        with(holder.binding) {
+            setupCalendar()
         }
     }
 
-    private fun setupCalendar(savedInstanceState: Bundle?) = with(binding) {
+    override fun unbind(holder: Holder) {
+        super.unbind(holder)
+    }
+
+    private fun FragmentCalendarEventBinding.setupCalendar() {
         rvCalendarEvent.layoutManager =
-            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            LinearLayoutManager(root.context, RecyclerView.VERTICAL, false)
         rvCalendarEvent.adapter = eventsAdapter
         rvCalendarEvent.addItemDecoration(
             DividerItemDecoration(
-                requireContext(),
+                root.context,
                 RecyclerView.VERTICAL
             )
         )
@@ -97,11 +86,11 @@ class EventCalendarFragment : Fragment(R.layout.fragment_calendar_event) {
 
         calendarView.scrollToMonth(currentMonth)
 
-        if (savedInstanceState == null) {
-            calendarView.post {
+        if (selectedDate == null) {
+            calendarView.postDelayed({
                 // Show today's events initially.
                 selectDate(today)
-            }
+            }, 500)
         }
 
 
@@ -125,7 +114,7 @@ class EventCalendarFragment : Fragment(R.layout.fragment_calendar_event) {
                     textView.setTextColor(Color.parseColor("#000000"))
                     when (day.date) {
                         selectedDate -> {
-                            textView.setTextColor(requireContext().getColorCompat(R.color.calendar_blue))
+                            textView.setTextColor(root.context.getColorCompat(R.color.calendar_blue))
                             if(day.date == today) container.todayBg.visibility = View.VISIBLE
                             textView.setTypeface(textView.typeface, Typeface.BOLD)
                             textView.setBackgroundResource(R.drawable.bg_calendar_day_selected)
@@ -142,18 +131,14 @@ class EventCalendarFragment : Fragment(R.layout.fragment_calendar_event) {
                 } else {
                     textView.visibility = View.VISIBLE
                     dotView.visibility = View.INVISIBLE
+                    textView.background = null
                     textView.setTextColor(Color.parseColor("#40000000"))
                 }
             }
         }
 
         calendarView.monthScrollListener = {
-            tvCalendarMonth.text =
-                    titleFormatter.format(it.yearMonth)
-//                (if (it.year == today.year) titleSameYearFormatter.format(it.yearMonth) else titleFormatter.format(
-//                    it.yearMonth
-//                ))
-
+            tvCalendarMonth.text = TimeHelper.formatMmmYyyy(it.yearMonth)
             // Select the first day of the month when
             // we scroll to a new month.
             selectDate(it.yearMonth.atDay(1))
@@ -179,46 +164,27 @@ class EventCalendarFragment : Fragment(R.layout.fragment_calendar_event) {
 
     }
 
-    private fun setupEvent(currentMonth: YearMonth) {
-        var day1 = currentMonth.atDay(MonthDay.now().dayOfMonth)
-        events[day1] = listOf(
-            CalendarEvent(UUID.randomUUID().toString(), "Kamufi Event", day1),
-            CalendarEvent(UUID.randomUUID().toString(), "Pelatihan Fiskom", day1)
-        )
-        updateAdapterForDate(day1)
-        events[day1.plusDays(3)] = listOf(
-            CalendarEvent(
-                UUID.randomUUID().toString(), "PORFI: Dota 2",
-                day1.plusDays(3)
-            ),
-            CalendarEvent(
-                UUID.randomUUID().toString(), "Pendaftaran MAWAPRES",
-                day1.plusDays(3)
-            ),
-            CalendarEvent(
-                UUID.randomUUID().toString(), "Roadshow Calon Ketua BEM",
-                day1.plusDays(3)
-            )
-        )
-        updateAdapterForDate(day1.plusDays(3))
+    private fun FragmentCalendarEventBinding.selectDate(date: LocalDate) {
+        if (selectedDate != date) {
+            val oldDate = selectedDate
+            selectedDate = date
+            oldDate?.let { calendarView.notifyDateChanged(it) }
+            calendarView.notifyDateChanged(date)
+            updateAdapterForDate(date)
+        }
     }
 
-    private fun updateAdapterForDate(date: LocalDate) {
+    private fun FragmentCalendarEventBinding.updateAdapterForDate(date: LocalDate) {
         eventsAdapter.events.clear()
         eventsAdapter.events.addAll(events[date].orEmpty())
         eventsAdapter.notifyDataSetChanged()
-        binding.tvCalendarSelectedDate.text = selectionFormatter.format(date)
+        tvCalendarSelectedDate.text = TimeHelper.formatdMmmYyyy(date)
     }
-}
 
-fun daysOfWeekFromLocale(): Array<DayOfWeek> {
-    val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-    var daysOfWeek = DayOfWeek.values()
-    // Order `daysOfWeek` array so that firstDayOfWeek is at index 0.
-    if (firstDayOfWeek != DayOfWeek.MONDAY) {
-        val rhs = daysOfWeek.sliceArray(firstDayOfWeek.ordinal..daysOfWeek.indices.last)
-        val lhs = daysOfWeek.sliceArray(0 until firstDayOfWeek.ordinal)
-        daysOfWeek = rhs + lhs
+    class Holder: EpoxyHolder() {
+        lateinit var binding: FragmentCalendarEventBinding
+        override fun bindView(itemView: View) {
+            binding = FragmentCalendarEventBinding.bind(itemView)
+        }
     }
-    return daysOfWeek
 }

@@ -1,85 +1,73 @@
 package unpad.fmipa.hifi.android.presentation.home
 
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.view.WindowManager
 import android.viewbinding.library.activity.viewBinding
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import unpad.fmipa.hifi.android.R
+import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import unpad.fmipa.hifi.android.databinding.ActivityMainBinding
-import unpad.fmipa.hifi.android.helpers.ChromeCustomTabs
+import unpad.fmipa.hifi.android.presentation.home.events.EventCalendarViewModel
+import unpad.fmipa.hifi.android.presentation.home.himpunan.HimpunanMainMenu
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), HomeEpoxyController.Listener {
 
     private val binding: ActivityMainBinding by viewBinding()
-    internal lateinit var viewModel: HomeViewModel
+    private val viewModel: HomeViewModel by viewModel()
+    private val calendarViewModel: EventCalendarViewModel by viewModel()
+
+    private val controller = HomeEpoxyController(this)
+
+    private var scrollY = 0
+    private var rvScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            scrollY += dy
+            setupToolbarColor()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-        )
-
         with(binding) {
-
-            scrollContent.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, _: Int ->
-                val colorBackground = if (scrollY < 255) {
-                    Color.argb(scrollY, 222, 36, 24)
-                } else {
-                    Color.argb(255, 222, 36, 24)
-                }
-                val colorText = if (scrollY < 255) {
-                    Color.argb(scrollY, 255, 255, 255)
-                } else {
-                    Color.argb(255, 255, 255, 255)
-                }
-                toolbar.mainToolbar.setBackgroundColor(colorBackground)
-                toolbar.tvTopbarTitle.setTextColor(colorText)
-            }
-
-            btnMainPaus.setOnClickListener {
-                ChromeCustomTabs.create(this@HomeActivity).build()
-                    .launchUrl(this@HomeActivity, Uri.parse(ChromeCustomTabs.PAUS_URL))
-            }
-
-            btnMainAngkutan.setOnClickListener {
-                ChromeCustomTabs.create(this@HomeActivity).build()
-                    .launchUrl(this@HomeActivity, Uri.parse(ChromeCustomTabs.ANGKUTAN_URL))
-            }
-
-            btnMainPintas.setOnClickListener {
-                ChromeCustomTabs.create(this@HomeActivity).build()
-                    .launchUrl(this@HomeActivity, Uri.parse(ChromeCustomTabs.PINTAS_URL))
-            }
+            mainRecyclerview.addOnScrollListener(rvScrollListener)
+            mainRecyclerview.setControllerAndBuildModels(controller)
         }
 
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.fl_main_hifi_menu,
-                HimpunanMainMenuFragment()
-            ).replace(
-                R.id.fl_event_calendar,
-                EventCalendarFragment()
-            ).replace(
-                R.id.fl_physics_dept_news,
-                PhysicsDeptNewsFragment()
-            )
-            .commit()
-
-        viewModel.snackbar.observe(this) { value ->
-            value?.let {
-                Snackbar.make(binding.rootView, value, Snackbar.LENGTH_LONG).show()
-                viewModel.onSnackbarShowed()
-            }
+        lifecycleScope.launchWhenResumed {
+            viewModel.snackbar.collectLatest(::showSnackbar)
         }
+        viewModel.articleListLive.observe(this, controller::submitNewsData)
+        calendarViewModel.events.observe(this, controller::submitCalendarEvents)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.fetchFeed()
+        calendarViewModel.fetch()
+    }
+
+    override fun onDestroy() {
+        binding.mainRecyclerview.removeOnScrollListener(rvScrollListener)
+        super.onDestroy()
+    }
+
+    override fun onHimpunanMenuClicked(item: HimpunanMainMenu) {
+        Toast.makeText(this, "${item.title} clicked", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showSnackbar(message: String) {
+        Snackbar.make(binding.rootView, message, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun setupToolbarColor() = with(binding.toolbar) {
+        mainToolbar.setBackgroundColor(Color.argb(scrollY.coerceIn(0, 255), 222, 36, 24))
+        tvTopbarTitle.setTextColor(Color.argb(scrollY.coerceIn(0, 255), 255, 255, 255))
     }
 
 }

@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.presentation.model
+package unpad.fmipa.hifi.android.presentation.home.himpunan
 
 data class HimpunanMainMenu(
     var title: String,

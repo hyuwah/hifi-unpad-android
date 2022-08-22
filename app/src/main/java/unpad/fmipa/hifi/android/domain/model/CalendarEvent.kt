@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.presentation.model
+package unpad.fmipa.hifi.android.domain.model
 
 import java.time.LocalDate
 

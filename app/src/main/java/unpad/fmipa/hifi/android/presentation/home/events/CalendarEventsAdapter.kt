@@ -1,10 +1,10 @@
-package unpad.fmipa.hifi.android.presentation.home
+package unpad.fmipa.hifi.android.presentation.home.events
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import unpad.fmipa.hifi.android.databinding.CalendarEventItemViewBinding
-import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
+import unpad.fmipa.hifi.android.domain.model.CalendarEvent
 
 class CalendarEventsAdapter(private val onClick: (CalendarEvent) -> Unit) :
     RecyclerView.Adapter<CalendarEventsAdapter.ViewHolder>() {

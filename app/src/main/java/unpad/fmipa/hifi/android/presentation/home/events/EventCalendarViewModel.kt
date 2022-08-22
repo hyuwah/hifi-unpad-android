@@ -1,4 +1,4 @@
-package unpad.fmipa.hifi.android.presentation.home
+package unpad.fmipa.hifi.android.presentation.home.events
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import unpad.fmipa.hifi.android.domain.Repository
-import unpad.fmipa.hifi.android.presentation.model.CalendarEvent
+import unpad.fmipa.hifi.android.domain.model.CalendarEvent
 import java.time.LocalDate
 import java.util.*
 
